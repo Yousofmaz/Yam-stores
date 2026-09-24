@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الشاملة | YAM FOR CARS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style> 
+        body { font-family: 'Cairo', sans-serif; background-color: #050505; color: white; }
+        .gold-border { border-color: rgba(212, 175, 55, 0.3); }
+        .gold-text { color: #d4af37; }
+        .card-box {
+            background: linear-gradient(145deg, #0d0d0d, #080808);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+        }
+        .tab-btn.active {
+            background: #d4af37;
+            color: black;
+            border-color: #d4af37;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#d4af37] selection:text-black">
+
+    <!-- شريط علوي -->
+    <header class="bg-black/95 border-b gold-border h-16 px-4 sm:px-6 flex items-center justify-between shrink-0">
+        <div>
+            <span class="text-sm font-black tracking-wider block">YAM FOR CARS</span>
+            <span class="text-[9px] gold-text font-semibold tracking-widest block" id="role-subtitle">لوحة الإدارة والتحكم</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+            <a href="index.html" class="px-3 py-1.5 rounded-xl bg-neutral-900 border gold-border text-xs font-bold text-neutral-300 hover:text-white transition-all">
+                <i class="fa-solid fa-store ml-1"></i> المتجر
+            </a>
+            <button onclick="logout()" class="px-3 py-1.5 bg-red-950/40 border border-red-500/40 text-red-400 rounded-xl text-xs font-bold hover:bg-red-900/40 transition-all hidden" id="logout-btn">
+                خروج <i class="fa-solid fa-right-from-bracket mr-1"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-section" class="flex-1 flex items-center justify-center p-4">
+        <div class="card-box rounded-2xl p-6 max-w-sm w-full border gold-border">
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 rounded-xl bg-neutral-900 border gold-border text-[#d4af37] flex items-center justify-center text-lg mx-auto mb-2">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="text-base font-black text-white">تسجيل دخول الإدارة</h2>
+                <p class="text-[10px] text-neutral-400">أدخل الرقم الوظيفي وكلمة المرور</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-neutral-300 mb-1">الرقم الوظيفي</label>
+                    <input type="text" id="emp-id" required placeholder="مثال: 1001" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-neutral-300 mb-1">كلمة المرور</label>
+                    <input type="password" id="emp-pass" required placeholder="••••••••" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white font-mono">
+                </div>
+                <button type="submit" class="w-full py-3 bg-[#d4af37] hover:bg-[#c29f30] text-black text-xs font-extrabold rounded-xl shadow-lg transition-all mt-2">
+                    دخول اللوحة
+                </button>
+            </form>
+
+            <div class="mt-4 pt-3 border-t gold-border text-center">
+                <button onclick="directChangePassword()" class="text-[11px] gold-text hover:underline font-bold">
+                    <i class="fa-solid fa-key ml-1"></i> تغيير كلمة المرور فوراً
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الرئيسية -->
+    <div id="admin-dashboard" class="flex-1 p-3 sm:p-6 max-w-4xl mx-auto w-full hidden flex flex-col">
+        
+        <!-- أزرار التنقل بين الخانات -->
+        <div id="tabs-container" class="grid grid-cols-3 gap-2 mb-5">
+            <button onclick="switchTab('add')" id="tab-btn-add" class="tab-btn active py-2.5 px-2 rounded-xl border gold-border text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-circle-plus"></i> إضافة سيارة
+            </button>
+            <button onclick="switchTab('manage')" id="tab-btn-manage" class="tab-btn py-2.5 px-2 rounded-xl border gold-border text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-car-tunnel"></i> التعديل والاعتماد
+            </button>
+            <button onclick="switchTab('stats')" id="tab-btn-stats" class="tab-btn py-2.5 px-2 rounded-xl border gold-border text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-chart-line"></i> الإحصائيات
+            </button>
+        </div>
+
+        <!-- خانة 1: إضافة سيارة -->
+        <div id="tab-content-add" class="tab-content card-box p-4 sm:p-6 rounded-2xl">
+            <h3 class="text-sm font-black text-white mb-4 flex items-center gap-2 pb-2 border-b gold-border">
+                <i class="fa-solid fa-circle-plus gold-text"></i> إضافة سيارة جديدة للمعرض
+            </h3>
+            
+            <form id="add-car-form" onsubmit="submitNewCar(event)" class="space-y-3.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">نوع السوق</label>
+                        <select id="car-market" required class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white">
+                            <option value="المستعمل">السوق المستعمل</option>
+                            <option value="الجديد">السوق الجديد (أصفر وكالة)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">عنوان السيارة</label>
+                        <input type="text" id="car-title" required placeholder="مثال: جينيسيس G80 وارد كوريا 2026" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">الشركة المصنعة</label>
+                        <input type="text" id="car-manuf" required placeholder="هيونداي / كيا" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">الفئة</label>
+                        <input type="text" id="car-cat" required placeholder="فل كامل" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">الموديل (السنة)</label>
+                        <input type="number" id="car-year" required value="2026" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">السعر (ريال)</label>
+                        <input type="number" id="car-price" required placeholder="120000" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">حالة السيارة</label>
+                        <select id="car-status-tag" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white">
+                            <option value="متوفرة بالمعرض">🚗 متوفرة بالمعرض الآن</option>
+                            <option value="قادمة من كوريا">🚢 قادمة في الطريق من كوريا</option>
+                            <option value="تم الحجز أو البيع">🔴 تم البيع / محجوزة</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-neutral-300 mb-1">صور السيارة (من الجهاز)</label>
+                        <input type="file" id="car-image-file" accept="image/*" multiple required class="w-full bg-neutral-900 border gold-border rounded-xl px-2 py-1.5 text-xs text-neutral-300 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#d4af37] file:text-black">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-neutral-300 mb-1">ملاحظات وصفية إضافية</label>
+                    <textarea id="car-desc" rows="2" placeholder="المواصفات، البدي..." class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2.5 text-xs text-white"></textarea>
+                </div>
+
+                <div class="flex items-center gap-2.5 pt-2">
+                    <input type="checkbox" id="car-approved" checked class="w-4 h-4 accent-[#d4af37]">
+                    <label for="car-approved" class="text-xs text-white font-bold cursor-pointer">اعتماد ونشر السيارة مباشرة في الموقع العام</label>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full py-3.5 bg-[#d4af37] hover:bg-[#c29f30] text-black text-xs font-extrabold rounded-xl shadow-lg transition-all mt-3">
+                    حفظ ونشر السيارة
+                </button>
+            </form>
+        </div>
+
+        <!-- خانة 2: التعديل والاعتماد -->
+        <div id="tab-content-manage" class="tab-content card-box p-4 sm:p-6 rounded-2xl hidden">
+            <h3 class="text-sm font-black text-white mb-4 flex items-center justify-between pb-2 border-b gold-border">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-car-tunnel gold-text"></i> إدارة واعتماد السيارات</span>
+                <span id="manage-count" class="text-xs font-mono text-[#d4af37]">0 سيارة مسجلة</span>
+            </h3>
+            
+            <div id="admin-cars-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-1"></div>
+        </div>
+
+        <!-- خانة 3: الإحصائيات -->
+        <div id="tab-content-stats" class="tab-content card-box p-4 sm:p-6 rounded-2xl hidden space-y-4">
+            <h3 class="text-sm font-black text-white mb-2 flex items-center gap-2 pb-2 border-b gold-border">
+                <i class="fa-solid fa-chart-line gold-text"></i> إحصائيات المعرض والموقع
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div class="bg-neutral-900/80 border gold-border rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] text-neutral-400 mb-1">إجمالي الزيارات</p>
+                        <h4 id="stat-total-visits" class="text-xl font-black gold-text font-mono">0</h4>
+                    </div>
+                    <div class="w-9 h-9 rounded-xl bg-[#d4af37]/10 border gold-border text-[#d4af37] flex items-center justify-center text-sm"><i class="fa-solid fa-eye"></i></div>
+                </div>
+
+                <div class="bg-neutral-900/80 border gold-border rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] text-neutral-400 mb-1">المتصلون الآن</p>
+                        <h4 id="stat-online-users" class="text-xl font-black text-emerald-400 font-mono">1</h4>
+                    </div>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-sm"><i class="fa-solid fa-users"></i></div>
+                </div>
+
+                <div class="bg-neutral-900/80 border gold-border rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] text-neutral-400 mb-1">قيمة السيارات</p>
+                        <h4 id="stat-total-portfolio" class="text-xl font-black gold-text font-mono">0 ﷼</h4>
+                    </div>
+                    <div class="w-9 h-9 rounded-xl bg-[#d4af37]/10 border gold-border text-[#d4af37] flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div>
+                </div>
+            </div>
+
+            <div class="bg-neutral-900/80 border gold-border rounded-2xl p-4">
+                <p class="text-[11px] text-neutral-400 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-fire text-amber-500"></i> السيارة الأكثر زيارة:</p>
+                <div id="most-viewed-car-box" class="text-xs text-white font-bold bg-black/50 p-3.5 rounded-xl border border-neutral-800">جاري تحميل البيانات...</div>
+            </div>
+        </div>
+
+        <!-- خانة 4: إدارة الموظفين (تظهر للمدير فقط برقم 1001) -->
+        <div id="tab-content-employees" class="tab-content card-box p-4 sm:p-6 rounded-2xl hidden space-y-4">
+            <h3 class="text-sm font-black text-white mb-2 flex items-center gap-2 pb-2 border-b gold-border">
+                <i class="fa-solid fa-user-tie gold-text"></i> خانة المدير: إدارة موظفي المعرض
+            </h3>
+            <p class="text-[11px] text-neutral-400">يمكنك هنا إضافة موظف جديد وتحديد رقمه الوظيفي وجواله ورمز السري الخاص به.</p>
+
+            <form onsubmit="addNewEmployee(event)" class="space-y-3 bg-neutral-900/50 p-4 rounded-xl border gold-border">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-neutral-400 mb-1">اسم الموظف</label>
+                        <input type="text" id="emp-name" required placeholder="مثال: محمد أحمد" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-neutral-400 mb-1">الرقم الوظيفي (للدخول)</label>
+                        <input type="text" id="emp-new-id" required placeholder="مثال: 1002" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-neutral-400 mb-1">رقم الجوال</label>
+                        <input type="text" id="emp-phone" required placeholder="055XXXXXXXX" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-neutral-400 mb-1">الرمز السري الخاص</label>
+                        <input type="password" id="emp-new-pass" required placeholder="••••••••" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-[#d4af37] text-black font-extrabold text-xs rounded-xl shadow-lg mt-2">إضافة الموظف وتسجيله بالنظام</button>
+            </form>
+
+            <div class="mt-4">
+                <h4 class="text-xs font-bold text-white mb-2">قائمة الموظفين المسجلين حالياً:</h4>
+                <div id="employees-list" class="space-y-2 max-h-[300px] overflow-y-auto"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- نافذة تعديل سيارة -->
+    <div id="edit-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="card-box rounded-2xl max-w-md w-full p-5 relative border gold-border">
+            <button onclick="closeEditModal()" class="absolute top-4 left-4 text-neutral-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-base font-black text-white mb-3.5 flex items-center gap-1.5"><i class="fa-solid fa-pen-to-square gold-text"></i> تعديل بيانات السيارة</h3>
+            
+            <form id="edit-car-form" onsubmit="saveEditedCar(event)" class="space-y-3">
+                <input type="hidden" id="edit-car-id">
+                <div>
+                    <label class="block text-[11px] text-neutral-400 mb-1">العنوان</label>
+                    <input type="text" id="edit-title" required class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] text-neutral-400 mb-1">السعر (﷼)</label>
+                        <input type="number" id="edit-price" required class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-neutral-400 mb-1">حالة النشر</label>
+                        <select id="edit-approved" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white">
+                            <option value="true">منشورة بالموقع</option>
+                            <option value="false">مخفية (غير معتمدة)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3 bg-[#d4af37] text-black font-extrabold text-xs rounded-xl shadow-lg mt-3">حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-black text-neutral-500 py-3 border-t gold-border text-center text-[10px] font-mono shrink-0">
+        YAM FOR CARS Admin Panel © 2026
+    </footer>
+
+    <!-- Firebase Scripts & Admin Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set, update, remove, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwEcC_7ecjMxOdLJzT4cWnklapNSMMQjo",
+            authDomain: "yam-stores.firebaseapp.com",
+            databaseURL: "https://yam-stores-default-rtdb.firebaseio.com",
+            projectId: "yam-stores",
+            storageBucket: "yam-stores.firebasestorage.app",
+            messagingSenderId: "337730969665",
+            appId: "1:337730969665:web:dd865104af15846291a6c0",
+            measurementId: "G-334MVEF7CR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let allProducts = {};
+        let currentEmpId = "";
+
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+            const btn = document.getElementById('tab-btn-' + tabName);
+            if(btn) btn.classList.add('active');
+        };
+
+        window.handleLogin = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('emp-id').value.trim();
+            const pass = document.getElementById('emp-pass').value.trim();
+
+            const adminRef = ref(db, 'admins/' + id);
+            get(adminRef).then((snapshot) => {
+                if (snapshot.exists() && snapshot.val().password === pass) {
+                    currentEmpId = id;
+                    initAdminSession(id);
+                } else if (id === "1001") {
+                    set(adminRef, { password: pass, name: "المدير العام", phone: "0554082283", role: "admin" }).then(() => {
+                        currentEmpId = id;
+                        initAdminSession(id);
+                    });
+                } else {
+                    alert("خطأ: الرقم الوظيفي أو الرمز السري غير صحيح!");
+                }
+            });
+        };
+
+        function initAdminSession(id) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+            
+            const tabsContainer = document.getElementById('tabs-container');
+
+            // إذا كان المستخدم هو المدير (1001) نضيف له زر إدارة الموظفين
+            if (id === "1001") {
+                document.getElementById('role-subtitle').textContent = "لوحة تحكم المدير العام";
+                tabsContainer.classList.remove('grid-cols-3');
+                tabsContainer.classList.add('grid-cols-4');
+                
+                if (!document.getElementById('tab-btn-employees')) {
+                    const empBtn = document.createElement('button');
+                    empBtn.onclick = () => switchTab('employees');
+                    empBtn.id = 'tab-btn-employees';
+                    empBtn.className = 'tab-btn py-2.5 px-2 rounded-xl border gold-border text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5';
+                    empBtn.innerHTML = '<i class="fa-solid fa-user-tie"></i> الموظفين';
+                    tabsContainer.appendChild(empBtn);
+                }
+                loadEmployeesList();
+            } else {
+                document.getElementById('role-subtitle').textContent = "لوحة تحكم موظف المعرض";
+            }
+
+            loadAdminData();
+            initStatsAndPresence();
+        }
+
+        window.directChangePassword = function() {
+            const id = prompt("أدخل الرقم الوظيفي:");
+            if (!id) return;
+            const newPass = prompt("أدخل الرمز السري الجديد:");
+            if (!newPass) return;
+
+            update(ref(db, 'admins/' + id), { password: newPass }).then(() => {
+                alert("تم تحديث الرمز السري بنجاح!");
+            });
+        };
+
+        window.logout = function() {
+            location.reload();
+        };
+
+        // إضافة موظف جديد بواسطة المدير
+        window.addNewEmployee = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('emp-name').value;
+            const empId = document.getElementById('emp-new-id').value.trim();
+            const phone = document.getElementById('emp-phone').value;
+            const password = document.getElementById('emp-new-pass').value;
+
+            set(ref(db, 'admins/' + empId), { name, phone, password, role: 'employee' }).then(() => {
+                alert(`تم تسجيل الموظف (${name}) بنجاح!`);
+                document.getElementById('emp-name').value = '';
+                document.getElementById('emp-new-id').value = '';
+                document.getElementById('emp-phone').value = '';
+                document.getElementById('emp-new-pass').value = '';
+                loadEmployeesList();
+            });
+        };
+
+        function loadEmployeesList() {
+            onValue(ref(db, 'admins'), (snapshot) => {
+                const data = snapshot.val() || {};
+                const listEl = document.getElementById('employees-list');
+                listEl.innerHTML = Object.keys(data).map(key => {
+                    const emp = data[key];
+                    return `
+                        <div class="card-box p-3 rounded-xl flex items-center justify-between text-xs">
+                            <div>
+                                <span class="text-amber-400 font-bold">${emp.name || 'موظف'}</span> 
+                                <span class="text-neutral-400 font-mono text-[10px]">(الرقم: ${key})</span>
+                                <div class="text-neutral-300 text-[10px]">الجوال: ${emp.phone || 'غير مسجل'}</div>
+                            </div>
+                            ${key !== "1001" ? `<button onclick="deleteEmployee('${key}')" class="px-2 py-1 bg-red-950/40 border border-red-500/30 text-red-400 rounded text-[10px]">حذف</button>` : '<span class="text-[10px] gold-text font-bold">المدير العام</span>'}
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        window.deleteEmployee = function(id) {
+            if(confirm("هل أنت متأكد من حذف هذا الموظف؟")) {
+                remove(ref(db, 'admins/' + id)).then(() => alert("تم الحذف بنجاح."));
+            }
+        };
+
+        window.submitNewCar = async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = "جاري معالجة ورفع الصور...";
+            submitBtn.disabled = true;
+
+            const fileInput = document.getElementById('car-image-file');
+            const files = fileInput.files;
+            let imagesArray = [];
+
+            try {
+                for (let file of files) {
+                    let base64String = await convertFileToBase64(file);
+                    imagesArray.push(base64String);
+                }
+
+                const newCarData = {
+                    marketType: document.getElementById('car-market').value,
+                    title: document.getElementById('car-title').value,
+                    manufacturer: document.getElementById('car-manuf').value,
+                    category: document.getElementById('car-cat').value,
+                    year: Number(document.getElementById('car-year').value),
+                    price: Number(document.getElementById('car-price').value),
+                    statusTag: document.getElementById('car-status-tag').value,
+                    images: imagesArray,
+                    description: document.getElementById('car-desc').value,
+                    approved: document.getElementById('car-approved').checked,
+                    viewsCount: 0,
+                    createdAt: Date.now()
+                };
+
+                await push(ref(db, 'products'), newCarData);
+                alert("تم رفع الصور ونشر السيارة بنجاح!");
+                document.getElementById('add-car-form').reset();
+                switchTab('manage');
+            } catch (err) {
+                alert("خطأ: " + err.message);
+            } finally {
+                submitBtn.textContent = "حفظ ونشر السيارة";
+                submitBtn.disabled = false;
+            }
+        };
+
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function loadAdminData() {
+            onValue(ref(db, 'products'), (snapshot) => {
+                const data = snapshot.val();
+                allProducts = data || {};
+                const listEl = document.getElementById('admin-cars-list');
+                const keys = Object.keys(allProducts);
+                
+                document.getElementById('manage-count').textContent = `${keys.length} سيارة مسجلة`;
+
+                if (keys.length === 0) {
+                    listEl.innerHTML = `<p class="text-center text-neutral-500 py-10 text-xs">لا توجد سيارات مضافة حالياً.</p>`;
+                    return;
+                }
+
+                let totalPortfolioValue = 0;
+
+                listEl.innerHTML = keys.map(key => {
+                    const car = allProducts[key];
+                    const isApproved = car.approved === true;
+                    totalPortfolioValue += (Number(car.price) || 0);
+
+                    return `
+                        <div class="card-box p-3 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border ${isApproved ? 'gold-border' : 'border-red-500/30'}">
+                            <div class="flex items-center gap-3 w-full sm:w-auto">
+                                <img src="${car.images?.[0] || 'https://placehold.co/100'}" class="w-14 h-12 rounded-lg object-cover border gold-border shrink-0">
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                                        <span class="px-2 py-0.5 bg-[#d4af37] text-black rounded text-[9px] font-black">${car.marketType}</span>
+                                        <span class="text-[9px] px-1.5 py-0.5 bg-neutral-900 border gold-border text-amber-300 rounded">${car.statusTag || 'متوفرة'}</span>
+                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${isApproved ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/40' : 'bg-red-950/60 text-red-400 border border-red-500/40'}">${isApproved ? 'منشورة' : 'مخفية'}</span>
+                                    </div>
+                                    <h4 class="text-xs font-bold text-white truncate">${car.title}</h4>
+                                    <div class="text-[11px] gold-text font-mono font-bold">${car.price} ﷼ | زيارات: ${car.viewsCount || 0}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-800">
+                                <button onclick="copyCarAd('${car.title}', '${car.price}', '${car.statusTag || ''}')" class="px-2 py-1.5 rounded-lg bg-neutral-900 border gold-border text-[10px] text-amber-300 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                                <button onclick="toggleApproval('${key}', ${!isApproved})" class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold ${isApproved ? 'bg-amber-950/50 text-amber-400 border border-amber-500/40' : 'bg-emerald-950/50 text-emerald-400 border border-emerald-500/40'}">${isApproved ? 'إلغاء النشر' : 'اعتماد'}</button>
+                                <button onclick="openEditModal('${key}')" class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border gold-border text-xs text-neutral-300 hover:text-white"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteCar('${key}')" class="px-2.5 py-1.5 rounded-lg bg-red-950/30 border border-red-500/30 text-red-400 hover:bg-red-900/50"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById('stat-total-portfolio').textContent = totalPortfolioValue.toLocaleString() + ' ﷼';
+                updateStatsDisplay(allProducts);
+            });
+        }
+
+        window.copyCarAd = function(title, price, status) {
+            const adText = `🚗 إعلان مميز من YAM FOR CARS\n\n- السيارة: ${title}\n- الحالة: ${status || 'متوفرة بالمعرض'}\n- السعر: ${price} ريال\n\n للطلب والاستفسار يرجى التواصل معنا عبر واتساب المعرض: 0554082283`;
+            navigator.clipboard.writeText(adText).then(() => alert("تم نسخ تفاصيل الإعلان بنجاح!"));
+        };
+
+        window.toggleApproval = function(id, status) {
+            update(ref(db, `products/${id}`), { approved: status });
+        };
+
+        window.deleteCar = function(id) {
+            if(confirm("هل أنت متأكد من حذف هذه السيارة؟")) remove(ref(db, `products/${id}`));
+        };
+
+        window.openEditModal = function(id) {
+            const car = allProducts[id];
+            if(!car) return;
+            document.getElementById('edit-car-id').value = id;
+            document.getElementById('edit-title').value = car.title;
+            document.getElementById('edit-price').value = car.price;
+            document.getElementById('edit-approved').value = car.approved ? "true" : "false";
+            document.getElementById('edit-modal').classList.remove('hidden');
+        };
+
+        window.closeEditModal = () => document.getElementById('edit-modal').classList.add('hidden');
+
+        window.saveEditedCar = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-car-id').value;
+            update(ref(db, `products/${id}`), {
+                title: document.getElementById('edit-title').value,
+                price: Number(document.getElementById('edit-price').value),
+                approved: document.getElementById('edit-approved').value === "true"
+            }).then(() => { alert("تم التحديث بنجاح!"); closeEditModal(); });
+        };
+
+        function initStatsAndPresence() {
+            const visitsRef = ref(db, 'stats/totalVisits');
+            get(visitsRef).then(snap => {
+                let visits = (snap.val() || 0) + 1;
+                set(visitsRef, visits);
+                document.getElementById('stat-total-visits').textContent = visits;
+            });
+
+            const onlineRef = ref(db, 'stats/onlineUsers');
+            const myPresenceRef = push(onlineRef);
+            set(myPresenceRef, true);
+            onDisconnect(myPresenceRef).remove();
+
+            onValue(onlineRef, snapshot => {
+                const count = snapshot.numChildren();
+                document.getElementById('stat-online-users').textContent = count > 0 ? count : 1;
+            });
+        }
+
+        function updateStatsDisplay(products) {
+            let carsArr = Object.keys(products).map(k => products[k]);
+            if (carsArr.length === 0) {
+                document.getElementById('most-viewed-car-box').textContent = "لا توجد سيارات مسجلة بعد.";
+                return;
+            }
+            carsArr.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0));
+            let topCar = carsArr.shift();
+            document.getElementById('most-viewed-car-box').innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <span class="text-amber-400 font-bold block mb-0.5 truncate">${topCar.title}</span>
+                        <span class="text-neutral-400 text-[10px]">عدد الزيارات: <strong class="text-white font-mono">${topCar.viewsCount || 0} زيارة</strong></span>
+                    </div>
+                    <span class="px-2.5 py-1 bg-[#d4af37] text-black rounded text-[10px] font-black shrink-0">${topCar.price} ﷼</span>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
