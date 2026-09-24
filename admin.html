@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | YAM FOR CARS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style> 
+        body { font-family: 'Cairo', sans-serif; background-color: #050505; color: white; }
+        .gold-border { border-color: rgba(212, 175, 55, 0.3); }
+        .gold-text { color: #d4af37; }
+        .card-box {
+            background: linear-gradient(145deg, #0d0d0d, #080808);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#d4af37] selection:text-black">
+
+    <!-- شريط علوي -->
+    <header class="bg-black/95 border-b gold-border h-16 px-6 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+            <img src="logo.png" alt="Logo" class="w-9 h-9 rounded-xl object-cover border gold-border" onerror="this.src='https://placehold.co/100x100/111/d4af37?text=YAM'">
+            <div>
+                <span class="text-sm font-black tracking-wider block">YAM FOR CARS</span>
+                <span class="text-[9px] gold-text font-semibold tracking-widest block">لوحة الإدارة</span>
+            </div>
+        </div>
+        <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-neutral-900 border gold-border text-xs font-bold text-neutral-300 hover:text-white transition-all">
+            <i class="fa-solid fa-store ml-1"></i> عرض المتجر
+        </a>
+    </header>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-section" class="flex-1 flex items-center justify-center p-4">
+        <div class="card-box rounded-2xl p-6 max-w-sm w-full border gold-border">
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 rounded-xl bg-neutral-900 border gold-border text-[#d4af37] flex items-center justify-center text-lg mx-auto mb-2">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="text-base font-black text-white">تسجيل دخول الإدارة</h2>
+                <p class="text-[10px] text-neutral-400">أدخل الرقم الوظيفي وكلمة المرور للمتابعة</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-neutral-300 mb-1">الرقم الوظيفي</label>
+                    <input type="text" id="emp-id" required placeholder="مثال: 1001" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-neutral-300 mb-1">كلمة المرور</label>
+                    <input type="password" id="emp-pass" required placeholder="••••••••" class="w-full bg-neutral-900 border gold-border rounded-xl px-3 py-2 text-xs text-white font-mono">
+                </div>
+                
+                <button type="submit" class="w-full py-2.5 bg-[#d4af37] hover:bg-[#c29f30] text-black text-xs font-extrabold rounded-xl shadow-lg transition-all mt-2">
+                    تسجيل الدخول
+                </button>
+            </form>
+
+            <!-- زر تغيير كلمة المرور المباشر -->
+            <div class="mt-4 pt-3 border-t gold-border text-center">
+                <button onclick="directChangePassword()" class="text-[11px] gold-text hover:underline font-bold">
+                    <i class="fa-solid fa-key ml-1"></i> نسيت أو تريد تغيير كلمة المرور فوراً؟
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الفعلية (تظهر بعد الدخول الناجح) -->
+    <div id="admin-dashboard" class="flex-1 p-6 max-w-5xl mx-auto w-full hidden">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b gold-border">
+            <div>
+                <h1 class="text-lg font-black text-white">إدارة سيارات المعرض</h1>
+                <p class="text-xs text-neutral-400">مرحباً بك، يمكنك إضافة أو تعديل السيارات هنا.</p>
+            </div>
+            <button onclick="logout()" class="px-4 py-2 bg-red-950/40 border border-red-500/40 text-red-400 rounded-xl text-xs font-bold hover:bg-red-900/40 transition-all">
+                تسجيل الخروج <i class="fa-solid fa-right-from-bracket mr-1"></i>
+            </button>
+        </div>
+
+        <div class="card-box p-5 rounded-2xl mb-6">
+            <h3 class="text-sm font-black text-white mb-3 flex items-center gap-1.5"><i class="fa-solid fa-circle-plus gold-text"></i> إضافة سيارة جديدة</h3>
+            <p class="text-xs text-neutral-400">استخدم صفحة إدارة المتجر لإضافة السيارات وتحديث الأسعار والمواصفات مباشرة.</p>
+        </div>
+    </div>
+
+    <footer class="bg-black text-neutral-500 py-3 border-t gold-border text-center text-[10px] font-mono shrink-0">
+        YAM FOR CARS Admin Panel © 2026
+    </footer>
+
+    <!-- Firebase Scripts & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwEcC_7ecjMxOdLJzT4cWnklapNSMMQjo",
+            authDomain: "yam-stores.firebaseapp.com",
+            databaseURL: "https://yam-stores-default-rtdb.firebaseio.com",
+            projectId: "yam-stores",
+            storageBucket: "yam-stores.firebasestorage.app",
+            messagingSenderId: "337730969665",
+            appId: "1:337730969665:web:dd865104af15846291a6c0",
+            measurementId: "G-334MVEF7CR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // دالة تسجيل الدخول
+        window.handleLogin = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('emp-id').value.trim();
+            const pass = document.getElementById('emp-pass').value.trim();
+
+            const adminRef = ref(db, 'admins/' + id);
+            get(adminRef).snapshot ? null : null; // Safe check
+
+            get(adminRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.password === pass) {
+                        alert("تم تسجيل الدخول بنجاح!");
+                        document.getElementById('login-section').classList.add('hidden');
+                        document.getElementById('admin-dashboard').classList.remove('hidden');
+                    } else {
+                        alert("خطأ: كلمة المرور غير صحيحة!");
+                    }
+                } else {
+                    // إذا كان الرقم 1001 غير موجود بعد في قاعدة البيانات، نقوم بإنشائه تلقائياً لكلمة مرور افتراضية 1234 لتسهيل دخولك
+                    if(id === "1001") {
+                        set(adminRef, { password: pass }).then(() => {
+                            alert("تم تسجيل الرقم الوظيفي 1001 لأول مرة وحفظ كلمة المرور بنجاح! تم الدخول.");
+                            document.getElementById('login-section').classList.add('hidden');
+                            document.getElementById('admin-dashboard').classList.remove('hidden');
+                        });
+                    } else {
+                        alert("خطأ: الرقم الوظيفي غير مسجل في النظام!");
+                    }
+                }
+            }).catch((err) => {
+                alert("حدث خطأ في الاتصال: " + err.message);
+            });
+        };
+
+        // دالة تغيير كلمة المرور فوراً بضغطة زر
+        window.directChangePassword = function() {
+            const id = prompt("أدخل الرقم الوظيفي الخاص بك (مثال: 1001):");
+            if (!id) return;
+
+            const newPass = prompt("أدخل كلمة المرور الجديدة:");
+            if (!newPass) return;
+
+            const adminRef = ref(db, 'admins/' + id);
+            
+            // تحديث أو إنشاء كلمة المرور الجديدة مباشرة في قاعدة البيانات
+            update(adminRef, { password: newPass })
+            .then(() => {
+                alert("تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول بها فوراً.");
+                document.getElementById('emp-id').value = id;
+                document.getElementById('emp-pass').value = newPass;
+            })
+            .catch((error) => {
+                // إذا لم يكن المسار موجوداً، نقوم بإنشائه بالكامل
+                set(adminRef, { password: newPass }).then(() => {
+                    alert("تم حفظ كلمة المرور الجديدة بنجاح للرقم الوظيفي " + id);
+                    document.getElementById('emp-id').value = id;
+                    document.getElementById('emp-pass').value = newPass;
+                });
+            });
+        };
+
+        window.logout = function() {
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('emp-pass').value = '';
+        };
+    </script>
+</body>
+</html>
