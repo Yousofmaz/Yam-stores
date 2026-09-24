@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAM FOR CARS | معرض السيارات الفاخرة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #050505; color: white; -webkit-tap-highlight-color: transparent; }
+        .gold-border { border-color: rgba(212, 175, 55, 0.3); }
+        .gold-text { color: #d4af37; }
+        .card-box {
+            background: linear-gradient(145deg, #0d0d0d, #060606);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.9);
+            transition: all 0.3s ease;
+        }
+        .card-box:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            transform: translateY(-2px);
+        }
+        .custom-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background-color: #121212;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            color: white;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .custom-input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#d4af37] selection:text-black">
+
+    <!-- شاشة الصيانة -->
+    <div id="maintenance-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center p-6 hidden">
+        <div class="card-box p-8 rounded-3xl border gold-border w-full max-w-md text-center space-y-6">
+            <div class="w-20 h-20 bg-amber-500/10 border gold-border rounded-2xl flex items-center justify-center mx-auto text-[#d4af37] text-3xl">
+                <i class="fa-solid fa-screwdriver-wrench animate-spin"></i>
+            </div>
+            <div class="space-y-2">
+                <h1 class="text-xl font-black text-white">الموقع تحت الصيانة والتطوير</h1>
+                <p class="text-xs text-neutral-400 leading-relaxed">نقوم حالياً بتحديث وتطوير معرضنا الرقمي لنقدم لكم تجربة أفضل. نعود إليكم قريباً جداً!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- الهيدر العلوي -->
+    <header class="bg-black/95 border-b gold-border h-20 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('home')">
+            <div class="w-12 h-12 rounded-2xl bg-[#d4af37]/10 border gold-border flex items-center justify-center text-[#d4af37] text-xl font-black">
+                YAM
+            </div>
+            <div>
+                <h1 class="text-sm sm:text-base font-black tracking-wider block">YAM FOR CARS</h1>
+                <span class="text-[10px] gold-text font-semibold tracking-widest block">معرض السيارات الفاخرة</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="switchView('request')" class="px-3 sm:px-4 py-2 bg-neutral-900 border gold-border text-amber-300 text-xs font-bold rounded-xl flex items-center gap-2 hover:bg-[#d4af37] hover:text-black transition-all">
+                <i class="fa-solid fa-car-tunnel"></i> اطلب سيارة غير متوفرة
+            </button>
+            <a href="https://wa.me/" target="_blank" class="px-3 sm:px-4 py-2 bg-emerald-600 text-white text-xs font-black rounded-xl flex items-center gap-2 shadow-lg hover:opacity-90 transition-all">
+                <i class="fa-brands fa-whatsapp text-sm"></i> الواتساب
+            </a>
+        </div>
+    </header>
+
+    <!-- 1. واجهة الصفحة الرئيسية (الخانات الثلاث الرئيسية) -->
+    <main id="view-home" class="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-8 space-y-8 my-auto">
+        <div class="text-center space-y-3 py-6">
+            <span class="text-xs font-mono gold-text tracking-widest uppercase block">مرحباً بكم في معرض يام للسيارات</span>
+            <h2 class="text-3xl sm:text-4xl font-black text-white">اختر القسم المناسب لتجربتك</h2>
+            <p class="text-xs sm:text-sm text-neutral-400 max-w-lg mx-auto">تصفح أحدث أفخم السيارات المستعملة والجديدة، أو اطلب سيارتك الخاصة بالمواصفات التي ترغب بها.</p>
+        </div>
+
+        <!-- الخانات الثلاث الرئيسية -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- الخانة الأولى: السيارات المستعملة -->
+            <div onclick="selectCategory('used')" class="card-box p-6 rounded-3xl cursor-pointer group text-center space-y-4 border gold-border">
+                <div class="w-16 h-16 rounded-2xl bg-[#d4af37]/10 border gold-border flex items-center justify-center text-[#d4af37] text-2xl mx-auto group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-car-rear"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-lg font-black text-white group-hover:text-amber-300 transition-colors">السيارات المستعملة</h3>
+                    <p class="text-xs text-neutral-400">تصفح تشكيلة السيارات المستعملة الفاخرة بحالة الوكالة</p>
+                </div>
+                <div class="pt-2">
+                    <span class="inline-flex items-center gap-2 text-xs font-bold gold-text">استعرض القسم <i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+            </div>
+
+            <!-- الخانة الثانية: السيارات الجديدة -->
+            <div onclick="selectCategory('new')" class="card-box p-6 rounded-3xl cursor-pointer group text-center space-y-4 border gold-border">
+                <div class="w-16 h-16 rounded-2xl bg-[#d4af37]/10 border gold-border flex items-center justify-center text-[#d4af37] text-2xl mx-auto group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-certificate"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-lg font-black text-white group-hover:text-amber-300 transition-colors">السيارات الجديدة (وكالة)</h3>
+                    <p class="text-xs text-neutral-400">أحدث الإصدارات العالمية الفاخرة أصفر وكالة</p>
+                </div>
+                <div class="pt-2">
+                    <span class="inline-flex items-center gap-2 text-xs font-bold gold-text">استعرض القسم <i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+            </div>
+
+            <!-- الخانة الثالثة: السيارات غير الموجودة / اطلبها -->
+            <div onclick="switchView('request')" class="card-box p-6 rounded-3xl cursor-pointer group text-center space-y-4 border gold-border">
+                <div class="w-16 h-16 rounded-2xl bg-[#d4af37]/10 border gold-border flex items-center justify-center text-[#d4af37] text-2xl mx-auto group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-lg font-black text-white group-hover:text-amber-300 transition-colors">سيارات غير موجودة (اطلبها)</h3>
+                    <p class="text-xs text-neutral-400">حدد مواصفات سيارتك المطلوبة وسنقوم بتوفيرها فوراً</p>
+                </div>
+                <div class="pt-2">
+                    <span class="inline-flex items-center gap-2 text-xs font-bold gold-text">تقديم طلب <i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 2. واجهة المعرض والفلترة المتقدمة (تفتح للقسم المختار) -->
+    <main id="view-gallery" class="flex-1 max-w-3xl mx-auto w-full p-4 sm:p-6 space-y-6 my-auto hidden">
+        <div class="flex items-center justify-between pb-4 border-b gold-border">
+            <div>
+                <button onclick="switchView('home')" class="text-xs gold-text hover:underline mb-1 inline-flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-right"></i> العودة للرئيسية
+                </button>
+                <h2 id="gallery-title" class="text-xl font-black text-white">السيارات</h2>
+            </div>
+        </div>
+
+        <!-- نظام الفلترة المتقدم -->
+        <div class="card-box p-4 rounded-2xl space-y-3 border gold-border">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[10px] text-neutral-400 mb-1">فلترة حسب الشركة</label>
+                    <select id="filter-brand" onchange="applyFilters()" class="custom-input text-xs">
+                        <option value="">جميع الشركات</option>
+                        <option value="مرسيدس بنز">مرسيدس بنز</option>
+                        <option value="بي إم دبليو">بي إم دبليو</option>
+                        <option value="لاند روفر">لاند روفر</option>
+                        <option value="رولز رويس">رولز رويس</option>
+                        <option value="لكزس">لكزس</option>
+                        <option value="بورش">بورش</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-neutral-400 mb-1">بحث باسم أو فئة السيارة</label>
+                    <input type="text" id="filter-search" oninput="applyFilters()" placeholder="ابحث بالاسم والموديل..." class="custom-input text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-neutral-400 mb-1">ترتيب السعر</label>
+                    <select id="filter-sort" onchange="applyFilters()" class="custom-input text-xs">
+                        <option value="default">الترتيب الافتراضي</option>
+                        <option value="high-to-low">من الأعلى للأقل سعراً</option>
+                        <option value="low-to-high">من الأقل للأعلى سعراً</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة المنتجات (أفقي ومستطيل كما طلبت) -->
+        <div id="cars-list-container" class="space-y-3">
+            <div class="card-box rounded-2xl p-6 text-center text-neutral-500">جاري التحميل...</div>
+        </div>
+    </main>
+
+    <!-- 3. واجهة طلب سيارة غير متوفرة (الخانة الثالثة) -->
+    <main id="view-request" class="flex-1 max-w-xl mx-auto w-full p-4 sm:p-6 space-y-6 my-auto hidden">
+        <div class="card-box p-6 sm:p-8 rounded-3xl border gold-border space-y-6">
+            <div class="flex items-center justify-between pb-4 border-b gold-border">
+                <div>
+                    <h2 class="text-base sm:text-lg font-black text-white">طلب سيارة غير متوفرة</h2>
+                    <p class="text-xs text-neutral-400 mt-0.5">املأ التفاصيل وسيصلك الطلب مباشرة للإدارة</p>
+                </div>
+                <button onclick="switchView('home')" class="px-3 py-1 bg-neutral-900 border gold-border text-xs text-neutral-300 rounded-xl">
+                    <i class="fa-solid fa-arrow-right ml-1"></i> العودة
+                </button>
+            </div>
+            
+            <form onsubmit="submitCustomRequest(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-neutral-400 mb-1">اسم الشركة المصنعة</label>
+                    <input type="text" id="req-brand-input" placeholder="مثال: مرسيدس، رولز رويس..." required class="custom-input">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">اسم السيارة والموديل</label>
+                        <input type="text" id="req-car-name" placeholder="مثال: S-Class 2026" required class="custom-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">الفئة المطلوبة</label>
+                        <input type="text" id="req-class" placeholder="مثال: فل كامل / أوتوبيوغرافي" required class="custom-input">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">اسمك الكريم</label>
+                        <input type="text" id="req-name" placeholder="اسمك الثلاثي" required class="custom-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">رقم الجوال</label>
+                        <input type="tel" id="req-phone" placeholder="05xxxxxxxx" required class="custom-input font-mono">
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-[#d4af37] to-[#aa8c2c] text-black font-black text-xs rounded-xl shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i> إرسال الطلب عبر الواتساب للإدارة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- نافذة تفاصيل السيارة مع تصفح الصور -->
+    <div id="details-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 hidden overflow-y-auto">
+        <div class="card-box p-5 sm:p-6 rounded-3xl border gold-border w-full max-w-lg space-y-4 my-auto relative max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b gold-border sticky top-0 bg-[#0d0d0d] z-10">
+                <h3 id="d-title" class="text-sm font-black text-white">تفاصيل السيارة</h3>
+                <button onclick="closeDetailsModal()" class="text-neutral-400 hover:text-white text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="relative rounded-2xl overflow-hidden bg-black h-56 sm:h-64 border gold-border">
+                    <img id="d-main-img" src="" class="w-full h-full object-cover cursor-pointer" onclick="openFullscreenImg()">
+                    <span id="d-tag" class="absolute top-3 right-3 px-2.5 py-1 bg-[#d4af37] text-black text-[10px] font-bold rounded-lg shadow">متوفرة</span>
+                    
+                    <div id="img-nav-buttons" class="absolute inset-x-3 top-1/2 -translate-y-1/2 flex justify-between items-center hidden">
+                        <button onclick="prevImage()" class="w-8 h-8 rounded-full bg-black/80 text-[#d4af37] border gold-border flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                        <button onclick="nextImage()" class="w-8 h-8 rounded-full bg-black/80 text-[#d4af37] border gold-border flex items-center justify-center"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                    </div>
+                </div>
+                <div id="img-thumbnails" class="flex gap-2 overflow-x-auto pb-1"></div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 id="d-full-title" class="text-sm font-black text-white">--</h4>
+                        <span id="d-market-badge" class="text-[10px] gold-text font-semibold">--</span>
+                    </div>
+                    <div class="text-left">
+                        <span id="d-price" class="text-base font-black font-mono gold-text block">-- ﷼</span>
+                        <span class="text-[9px] text-neutral-400">السعر النهائي</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 pt-1 text-center font-mono text-xs">
+                    <div class="card-box p-2 rounded-xl border gold-border">
+                        <span class="text-[9px] text-neutral-400 block">الموديل</span>
+                        <span id="d-year" class="font-bold text-white">--</span>
+                    </div>
+                    <div class="card-box p-2 rounded-xl border gold-border">
+                        <span class="text-[9px] text-neutral-400 block">الممشى</span>
+                        <span id="d-mileage" class="font-bold text-white">--</span>
+                    </div>
+                    <div class="card-box p-2 rounded-xl border gold-border">
+                        <span class="text-[9px] text-neutral-400 block">الدفع</span>
+                        <span id="d-drive" class="font-bold text-white">--</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="text-xs text-neutral-400 block">المواصفات:</span>
+                    <p id="d-desc" class="text-xs text-neutral-200 bg-neutral-900/60 p-3 rounded-xl border gold-border leading-relaxed">--</p>
+                </div>
+
+                <div class="pt-1">
+                    <a id="d-whatsapp-btn" href="#" target="_blank" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg hover:opacity-90 transition-all">
+                        <i class="fa-brands fa-whatsapp text-base"></i> الاستفسار عن هذه السيارة عبر الواتساب
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تكبير الصورة (Lightbox) -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 hidden" onclick="closeFullscreenImg()">
+        <img id="lightbox-img" src="" class="max-w-full max-h-[90vh] object-contain rounded-xl border gold-border">
+    </div>
+
+    <footer class="bg-black text-neutral-500 py-6 border-t gold-border text-center text-xs space-y-1 shrink-0">
+        <p class="font-bold text-neutral-400">YAM FOR CARS | معرض تجارة السيارات الفاخرة</p>
+        <p class="font-mono text-[10px]">جميع الحقوق محفوظة © 2026</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwEcC_7ecjMxOdLJzT4cWnklapNSMMQjo",
+            authDomain: "yam-stores.firebaseapp.com",
+            databaseURL: "https://yam-stores-default-rtdb.firebaseio.com",
+            projectId: "yam-stores",
+            storageBucket: "yam-stores.firebasestorage.app",
+            messagingSenderId: "337730969665",
+            appId: "1:337730969665:web:dd865104af15846291a6c0",
+            measurementId: "G-334MVEF7CR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let allCarsData = {};
+        let currentCategory = 'used';
+        let currentCarImages = [];
+        let currentImageIdx = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSiteMaintenance();
+            fetchPublicCars();
+        });
+
+        function checkSiteMaintenance() {
+            onValue(ref(db, 'settings/maintenance'), (snap) => {
+                if (snap.val() === true) document.getElementById('maintenance-screen').classList.remove('hidden');
+            });
+        }
+
+        function fetchPublicCars() {
+            onValue(ref(db, 'products'), (snap) => {
+                allCarsData = snap.val() || {};
+                renderCarsList();
+            });
+        }
+
+        window.switchView = function(viewName) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-gallery').classList.add('hidden');
+            document.getElementById('view-request').classList.add('hidden');
+
+            if (viewName === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+            } else if (viewName === 'gallery') {
+                document.getElementById('view-gallery').classList.remove('hidden');
+            } else if (viewName === 'request') {
+                document.getElementById('view-request').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.selectCategory = function(cat) {
+            currentCategory = cat;
+            document.getElementById('gallery-title').textContent = cat === 'used' ? 'قسم السيارات المستعملة' : 'قسم السيارات الجديدة (وكالة)';
+            switchView('gallery');
+            renderCarsList();
+        };
+
+        // عرض المنتجات بشكل مستطيل أفقي مع تطبيق الفلترة وترتيب الأسعار
+        window.applyFilters = function() {
+            renderCarsList();
+        };
+
+        function renderCarsList() {
+            const container = document.getElementById('cars-list-container');
+            const brandFilter = document.getElementById('filter-brand').value.toLowerCase();
+            const searchFilter = document.getElementById('filter-search').value.toLowerCase();
+            const sortOrder = document.getElementById('filter-sort').value;
+
+            let keys = Object.keys(allCarsData).filter(k => {
+                const car = allCarsData[k];
+                if (car.approved !== true) return false;
+                if (car.marketType !== currentCategory) return false;
+                
+                const titleLower = (car.title || '').toLowerCase();
+                if (brandFilter && !titleLower.includes(brandFilter)) return false;
+                if (searchFilter && !titleLower.includes(searchFilter)) return false;
+                return true;
+            });
+
+            // ترتيب الأسعار
+            keys.sort((a, b) => {
+                const priceA = Number(allCarsData[a].price || 0);
+                const priceB = Number(allCarsData[b].price || 0);
+                if (sortOrder === 'high-to-low') return priceB - priceA;
+                if (sortOrder === 'low-to-high') return priceA - priceB;
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 card-box rounded-2xl space-y-3 border gold-border">
+                        <div class="text-[#d4af37] text-3xl"><i class="fa-solid fa-car"></i></div>
+                        <p class="text-neutral-400 text-xs">لا توجد سيارات مطابقة لبحثك في هذا القسم حالياً.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = keys.map(k => {
+                const car = allCarsData[k];
+                const img = car.images?.[0] || 'https://placehold.co/400x300';
+                return `
+                    <div class="card-box rounded-2xl p-3 flex items-center justify-between gap-3 cursor-pointer group relative border gold-border" onclick="openDetails('${k}')">
+                        <!-- صورة السيارة على اليمين (مستطيل أفقي) -->
+                        <div class="relative w-36 sm:w-40 h-28 sm:h-32 rounded-xl overflow-hidden bg-black shrink-0 border gold-border order-1">
+                            <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-2 right-2 px-2 py-0.5 bg-[#d4af37] text-black text-[9px] font-black rounded-md">
+                                ${car.statusTag || 'متوفرة'}
+                            </span>
+                        </div>
+
+                        <!-- بيانات السيارة على اليسار -->
+                        <div class="flex-1 space-y-1.5 w-full text-right order-2">
+                            <span class="text-[9px] gold-text font-mono">SA-${k.substring(0, 8)}</span>
+                            <h3 class="text-xs sm:text-sm font-black text-white group-hover:text-amber-300 transition-colors line-clamp-1">${car.title}</h3>
+                            
+                            <div class="flex items-center gap-3 text-[10px] text-neutral-400 font-mono pt-0.5">
+                                <div><i class="fa-solid fa-gauge text-[#d4af37] ml-1"></i> ${car.mileage || 'وكالة'}</div>
+                                <div><i class="fa-solid fa-calendar-days text-[#d4af37] ml-1"></i> ${car.year || '2026'}</div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-1 border-t gold-border mt-1">
+                                <div>
+                                    <span class="text-[9px] text-neutral-400 block">السعر النهائي</span>
+                                    <span class="text-sm sm:text-base font-black font-mono gold-text">${Number(car.price || 0).toLocaleString()} <span class="text-[10px] font-normal text-neutral-400">رس</span></span>
+                                </div>
+                                <div class="px-3 py-1.5 rounded-xl bg-[#d4af37]/10 border gold-border text-[11px] font-bold text-[#d4af37] group-hover:bg-[#d4af37] group-hover:text-black transition-all">
+                                    التفاصيل
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.submitCustomRequest = function(e) {
+            e.preventDefault();
+            const brand = document.getElementById('req-brand-input').value;
+            const carName = document.getElementById('req-car-name').value;
+            const carClass = document.getElementById('req-class').value;
+            const name = document.getElementById('req-name').value;
+            const phone = document.getElementById('req-phone').value;
+
+            const msg = encodeURIComponent(`السلام عليكم، أرغب في طلب سيارة غير متوفرة بالمعرض:%0A- الشركة: ${brand}%0A- اسم السيارة والموديل: ${carName}%0A- الفئة المطلوبة: ${carClass}%0A- اسم العميل: ${name}%0A- الجوال: ${phone}`);
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        };
+
+        window.openDetails = function(id) {
+            const car = allCarsData[id];
+            if (!car) return;
+
+            currentCarImages = car.images && car.images.length > 0 ? car.images : ['https://placehold.co/600x400'];
+            currentImageIdx = 0;
+
+            updateMainImageDisplay();
+
+            document.getElementById('d-title').textContent = car.title;
+            document.getElementById('d-full-title').textContent = car.title;
+            document.getElementById('d-tag').textContent = car.statusTag || 'متوفرة';
+            document.getElementById('d-market-badge').textContent = car.marketType === 'new' ? 'السوق الجديد (وكالة)' : 'السوق المستعمل';
+            document.getElementById('d-price').textContent = `${Number(car.price || 0).toLocaleString()} ﷼`;
+            document.getElementById('d-year').textContent = car.year || '2026';
+            document.getElementById('d-mileage').textContent = car.mileage || 'وكالة';
+            document.getElementById('d-drive').textContent = car.driveType || 'رباعي';
+            document.getElementById('d-desc').textContent = car.description || 'لا توجد ملاحظات إضافية مسجلة لهذه السيارة.';
+
+            // رسالة الواتساب الاحترافية مرفقة برابط السيارة وتفاصيلها الدقيقة
+            const carLink = window.location.href.split('#')[0];
+            const waText = encodeURIComponent(`السلام عليكم، أرغب الاستفسار عن هذه السيارة المتوفرة في المعرض:%0A🚗 *${car.title}*%0A💰 السعر: ${Number(car.price || 0).toLocaleString()} ريال%0A📅 الموديل: ${car.year || '2026'} | الممشى: ${car.mileage || 'وكالة'}%0A🔗 رابط السيارة: ${carLink}`);
+            document.getElementById('d-whatsapp-btn').href = `https://wa.me/?text=${waText}`;
+
+            document.getElementById('details-modal').classList.remove('hidden');
+        };
+
+        function updateMainImageDisplay() {
+            document.getElementById('d-main-img').src = currentCarImages[currentImageIdx];
+            const navButtons = document.getElementById('img-nav-buttons');
+            const thumbContainer = document.getElementById('img-thumbnails');
+            
+            if (currentCarImages.length > 1) {
+                navButtons.classList.remove('hidden');
+                thumbContainer.innerHTML = currentCarImages.map((imgUrl, idx) => `
+                    <div onclick="setImgIndex(${idx})" class="w-14 h-12 rounded-lg overflow-hidden border ${idx === currentImageIdx ? 'border-[#d4af37] opacity-100' : 'border-neutral-800 opacity-60'} cursor-pointer shrink-0 bg-black">
+                        <img src="${imgUrl}" class="w-full h-full object-cover">
+                    </div>
+                `).join('');
+            } else {
+                navButtons.classList.add('hidden');
+                thumbContainer.innerHTML = '';
+            }
+        }
+
+        window.setImgIndex = function(idx) { currentImageIdx = idx; updateMainImageDisplay(); };
+        window.nextImage = function() { currentImageIdx = (currentImageIdx + 1) % currentCarImages.length; updateMainImageDisplay(); };
+        window.prevImage = function() { currentImageIdx = (currentImageIdx - 1 + currentCarImages.length) % currentCarImages.length; updateMainImageDisplay(); };
+        window.openFullscreenImg = function() { document.getElementById('lightbox-img').src = currentCarImages[currentImageIdx]; document.getElementById('lightbox-modal').classList.remove('hidden'); };
+        window.closeFullscreenImg = function() { document.getElementById('lightbox-modal').classList.add('hidden'); };
+        window.closeDetailsModal = function() { document.getElementById('details-modal').classList.add('hidden'); };
+    </script>
+</body>
+</html>
