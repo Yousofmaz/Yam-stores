@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | YAM FOR CARS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style> 
+        body { font-family: 'Cairo', sans-serif; } 
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-black text-white antialiased min-h-screen">
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center p-4">
+        <div class="bg-neutral-950 border border-neutral-800 rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-white text-black flex items-center justify-center font-black text-2xl mx-auto mb-4 shadow-lg">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h1 class="text-2xl font-black text-white">تسجيل دخول المشرف</h1>
+                <p class="text-neutral-400 text-sm mt-1">YAM FOR CARS - لوحة الإدارة</p>
+            </div>
+            <form id="login-form" class="space-y-5" onsubmit="handleLogin(event)">
+                <div>
+                    <label class="block text-sm font-bold text-neutral-300 mb-2">الرقم الوظيفي</label>
+                    <input type="text" id="emp-id" required placeholder="أدخل الرقم الوظيفي" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-neutral-300 mb-2">كلمة المرور</label>
+                    <input type="password" id="emp-pass" required placeholder="••••••••" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white">
+                </div>
+                <button type="submit" class="w-full py-4 bg-white hover:bg-neutral-200 text-black font-extrabold rounded-xl shadow-lg transition-all">تسجيل الدخول</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الرئيسية -->
+    <div id="admin-dashboard" class="hidden">
+        <header class="bg-neutral-950 border-b border-neutral-900 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center font-black text-lg">
+                        <i class="fa-solid fa-gauge"></i>
+                    </div>
+                    <span class="text-xl font-black text-white">لوحة تحكم YAM FOR CARS</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-sm font-bold text-neutral-300">
+                        <i class="fa-solid fa-arrow-right ml-1"></i> العودة للموقع
+                    </a>
+                    <button onclick="logout()" class="px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 hover:bg-red-950 text-sm font-bold text-red-400">
+                        <i class="fa-solid fa-right-from-bracket ml-1"></i> خروج
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-5xl mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div onclick="switchTab('add-car')" id="tab-add-car" class="bg-neutral-950 border-2 border-white rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900">
+                    <div class="w-12 h-12 rounded-xl bg-white text-black flex items-center justify-center font-bold text-xl mb-4">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-white mb-1">إضافة سيارة جديدة</h3>
+                    <p class="text-xs text-neutral-400">تحديد نوع السوق (جديد/مستعمل) ورفع حتى 20 صورة.</p>
+                </div>
+
+                <div onclick="switchTab('manage-cars')" id="tab-manage-cars" class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900">
+                    <div class="w-12 h-12 rounded-xl bg-neutral-900 text-neutral-300 border border-neutral-800 flex items-center justify-center font-bold text-xl mb-4">
+                        <i class="fa-solid fa-car-rear"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-white mb-1">السيارات المضافة</h3>
+                    <p class="text-xs text-neutral-400">إدارة، تعديل أو حذف السيارات المسجلة.</p>
+                </div>
+
+                <div onclick="switchTab('reports')" id="tab-reports" class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900">
+                    <div class="w-12 h-12 rounded-xl bg-neutral-900 text-neutral-300 border border-neutral-800 flex items-center justify-center font-bold text-xl mb-4">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-white mb-1">حالة المعرض</h3>
+                    <p class="text-xs text-neutral-400">إحصائيات وقاعدة البيانات.</p>
+                </div>
+            </div>
+
+            <!-- نموذج إضافة وتعديل سيارة -->
+            <div id="section-add-car" class="bg-neutral-950 border border-neutral-900 rounded-3xl p-8 shadow-2xl">
+                <h2 id="form-title" class="text-2xl font-black text-white mb-6">إضافة سيارة جديدة للمعرض</h2>
+                <form id="product-form" class="space-y-6">
+                    <input type="hidden" id="product-id">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- اختيار نوع السوق (جديد أو مستعمل) -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">تحديد القسم (السوق)</label>
+                            <select id="market-type" required class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white">
+                                <option value="">اختر القسم...</option>
+                                <option value="المستعمل">السوق المستعمل</option>
+                                <option value="الجديد">السوق الجديد</option>
+                            </select>
+                        </div>
+
+                        <!-- اسم الشركة المصنعة -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">اسم الشركة المصنعة</label>
+                            <select id="manufacturer" required onchange="updateCarModelsList()" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white">
+                                <option value="">اختر الشركة المصنعة...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- اسم السيارة -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">اسم السيارة</label>
+                            <select id="car-model-name" required class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white">
+                                <option value="">اختر الشركة أولاً...</option>
+                            </select>
+                        </div>
+
+                        <!-- الفئة -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">فئة السيارة</label>
+                            <select id="car-category" required class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white">
+                                <option value="">اختر الفئة...</option>
+                                <option value="فل كامل">فل كامل</option>
+                                <option value="نص فل">نص فل</option>
+                                <option value="ستاندر / سياحي">ستاندر / سياحي</option>
+                            </select>
+                        </div>
+
+                        <!-- الموديل (سنة الصنع) -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">الموديل (سنة الصنع)</label>
+                            <select id="car-year" required class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white font-mono">
+                                <option value="">اختر سنة الموديل...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- السعر بالريال السعودي -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">السعر (بالريال السعودي)</label>
+                            <div class="relative">
+                                <input type="number" id="price" required placeholder="مثال: 145000" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 pl-16 text-white focus:outline-none focus:border-white font-mono text-lg font-bold">
+                                <span class="absolute left-4 top-3 text-neutral-400 font-bold font-mono">﷼</span>
+                            </div>
+                        </div>
+
+                        <!-- الممشى -->
+                        <div>
+                            <label class="block text-sm font-bold text-neutral-300 mb-2">الممشى (كم)</label>
+                            <input type="text" id="mileage" placeholder="مثال: 45000 أو أصفر (جديد)" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white font-mono">
+                        </div>
+                    </div>
+
+                    <!-- رفع الصور مباشرة من الجوال (حتى 20 صورة) -->
+                    <div>
+                        <label class="block text-sm font-bold text-neutral-300 mb-2"><i class="fa-solid fa-images ml-1"></i> رفع الصور (بحد أقصى 20 صورة مباشرة من الجوال أو الكمبيوتر)</label>
+                        <input type="file" id="image-file-input" multiple accept="image/*" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-neutral-300 focus:outline-none focus:border-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-white file:text-black hover:file:bg-neutral-200 cursor-pointer">
+                        <div id="upload-preview-container" class="grid grid-cols-5 gap-3 mt-4"></div>
+                    </div>
+
+                    <!-- الملاحظات كتابة -->
+                    <div>
+                        <label class="block text-sm font-bold text-neutral-300 mb-2">الملاحظات كتابة</label>
+                        <textarea id="description" rows="4" placeholder="اكتب تفاصيل حالة السيارة، المواصفات الفنية، أو ملاحظات الفحص..." class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white"></textarea>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button type="submit" id="save-btn" class="flex-1 py-4 bg-white hover:bg-neutral-200 text-black font-extrabold rounded-xl shadow-lg transition-all">حفظ وإضافة السيارة</button>
+                        <button type="button" id="cancel-btn" onclick="resetForm()" class="hidden px-6 py-4 bg-neutral-900 border border-neutral-800 text-neutral-300 font-bold rounded-xl">إلغاء التعديل</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- قائمة السيارات المضافة لإدارتها -->
+            <div id="section-manage-cars" class="hidden">
+                <h2 class="text-2xl font-black text-white mb-6">السيارات المضافة في المعرض</h2>
+                <div id="admin-products-list" class="space-y-4"></div>
+            </div>
+
+            <!-- حالة المعرض والإحصائيات -->
+            <div id="section-reports" class="hidden bg-neutral-950 border border-neutral-900 rounded-3xl p-8">
+                <h2 class="text-2xl font-black text-white mb-6">إحصائيات المعرض</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl">
+                        <span class="text-neutral-400 text-sm font-bold block mb-1">إجمالي السيارات المسجلة</span>
+                        <span id="stat-total-cars" class="text-4xl font-black text-white font-mono">0</span>
+                    </div>
+                    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl">
+                        <span class="text-neutral-400 text-sm font-bold block mb-1">حالة النظام</span>
+                        <span class="text-emerald-400 font-extrabold text-sm flex items-center gap-2 mt-1">
+                            <i class="fa-solid fa-circle-check"></i> قاعدة البيانات مرتبطة وتعمل بنجاح
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwEcC_7ecjMxOdLJzT4cWnklapNSMMQjo",
+            authDomain: "yam-stores.firebaseapp.com",
+            databaseURL: "https://yam-stores-default-rtdb.firebaseio.com",
+            projectId: "yam-stores",
+            storageBucket: "yam-stores.firebasestorage.app",
+            messagingSenderId: "337730969665",
+            appId: "1:337730969665:web:dd865104af15846291a6c0",
+            measurementId: "G-334MVEF7CR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const productsRef = ref(db, 'products');
+
+        let allProducts = {};
+        let uploadedImagesBase64 = [];
+
+        const carBrandsData = {
+            "تويوتا (Toyota)": ["كامري", "لاندكروزر", "كورولا", "هايلكس", "راف فور", "أفالون", "ياريس", "برادو", "فورتشنر", "سيكويا", "هايلاندر"],
+            "مرسيدس-بنز (Mercedes-Benz)": ["الفئة S", "الفئة E", "الفئة C", "G-Class (جي كلاس)", "GLE", "GLS", "A-Class", "CLS", "AMG GT", "Maybach"],
+            "بي إم دبليو (BMW)": ["الفئة السابعة (7 Series)", "الفئة الخامسة (5 Series)", "الفئة الثالثة (3 Series)", "X5", "X6", "X7", "i7", "M4", "M5"],
+            "هيونداي (Hyundai)": ["سوناتا", "النترا", "توسان", "سانتافي", "آكسنت", "بالسيد", "كونا", "ستاريا"],
+            "كيا (Kia)": ["تيلوريد", "سورينتو", "سبورتاج", "K5", "سيراتو", "كارنفال", "سيلتوس"],
+            "لكزس (Lexus)": ["LX 600", "RX", "ES", "LS", "IS", "NX", "GX 550"],
+            "فورد (Ford)": ["إكسبلورر", "إكسبيديشن", "مستنج", "إدج", "رابتور F-150", "تورس"],
+            "شيفروليه (Chevrolet)": ["تاهو", "سوبربان", "كامارو", "ترفرس", "سيلفرادو", "كورفيت"],
+            "بورش (Porsche)": ["كايين", "ماكان", "باناميرا", "911", "تايكان"],
+            "لاند روفر / رنج روفر (Land Rover)": ["رنج روفر فيلار", "رنج روفر سبورت", "رنج روفر إيفوك", "ديفندر", "دسكفري"],
+            "جيب (Jeep)": ["رانجلر", "جراند شيروكي", "رينيجيد"],
+            "نيسان (Nissan)": ["باترول (سفاري / بلاتينيوم)", "التيما", "ماكسيما", "صني", "إكس تريل", "باتفايندر"],
+            "هوندا (Honda)": ["أكورد", "سيفيك", "CR-V", "Pilot"],
+            "دودج (Dodge)": ["تشارجر", "تشالنجر", "دورانجو"],
+            "رولز رويس (Rolls-Royce)": ["كوليبان", "فانتوم", "گوست", "ريث"],
+            "بنتلي (Bentley)": ["بينتايغا", "كونتيننتال GT", "فلورسبير"],
+            "أودي (Audi)": ["A6", "A8", "Q7", "Q8", "e-tron"],
+            "جينيسيس (Genesis)": ["G70", "G80", "G90", "GV70", "GV80"],
+            "أخرى": ["أخرى"]
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const manSelect = document.getElementById('manufacturer');
+            for (let brand in carBrandsData) {
+                let opt = document.createElement('option');
+                opt.value = brand;
+                opt.textContent = brand;
+                manSelect.appendChild(opt);
+            }
+
+            const yearSelect = document.getElementById('car-year');
+            for (let y = 2027; y >= 1990; y--) {
+                let opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            }
+
+            if (localStorage.getItem('admin_logged') === 'true') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+            }
+        });
+
+        window.updateCarModelsList = function() {
+            const man = document.getElementById('manufacturer').value;
+            const modelSelect = document.getElementById('car-model-name');
+            modelSelect.innerHTML = '<option value="">اختر اسم السيارة...</option>';
+
+            if (man && carBrandsData[man]) {
+                carBrandsData[man].forEach(carName => {
+                    let opt = document.createElement('option');
+                    opt.value = carName;
+                    opt.textContent = carName;
+                    modelSelect.appendChild(opt);
+                });
+            }
+        };
+
+        document.getElementById('image-file-input').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files).slice(0, 20);
+            uploadedImagesBase64 = [];
+            const previewContainer = document.getElementById('upload-preview-container');
+            previewContainer.innerHTML = '';
+
+            if (files.length === 0) return;
+
+            files.forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64String = event.target.result;
+                    uploadedImagesBase64.push(base64String);
+
+                    const div = document.createElement('div');
+                    div.className = "relative aspect-square rounded-xl overflow-hidden border border-neutral-800 bg-black";
+                    div.innerHTML = `<img src="${base64String}" class="w-full h-full object-cover">`;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        window.handleLogin = function(e) {
+            e.preventDefault();
+            const empId = document.getElementById('emp-id').value;
+            const empPass = document.getElementById('emp-pass').value;
+
+            if (empId.trim() !== "" && empPass.trim() !== "") {
+                localStorage.setItem('admin_logged', 'true');
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+            } else {
+                alert('الرجاء إدخال الرقم الوظيفي وكلمة المرور');
+            }
+        };
+
+        window.logout = function() {
+            localStorage.removeItem('admin_logged');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('admin-dashboard').classList.add('hidden');
+        };
+
+        window.switchTab = function(tabName) {
+            document.getElementById('section-add-car').classList.add('hidden');
+            document.getElementById('section-manage-cars').classList.add('hidden');
+            document.getElementById('section-reports').classList.add('hidden');
+
+            document.getElementById('tab-add-car').className = "bg-neutral-950 border border-neutral-800 rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900";
+            document.getElementById('tab-manage-cars').className = "bg-neutral-950 border border-neutral-800 rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900";
+            document.getElementById('tab-reports').className = "bg-neutral-950 border border-neutral-800 rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900";
+
+            if (tabName === 'add-car') {
+                document.getElementById('section-add-car').classList.remove('hidden');
+                document.getElementById('tab-add-car').className = "bg-neutral-950 border-2 border-white rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900";
+            } else if (tabName === 'manage-cars') {
+                document.getElementById('section-manage-cars').classList.remove('hidden');
+                document.getElementById('tab-manage-cars').className = "bg-neutral-950 border-2 border-white rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900";
+            } else if (tabName === 'reports') {
+                document.getElementById('section-reports').classList.remove('hidden');
+                document.getElementById('tab-reports').className = "bg-neutral-950 border-2 border-white rounded-2xl p-6 cursor-pointer transition-all hover:bg-neutral-900";
+            }
+        };
+
+        onValue(productsRef, (snapshot) => {
+            const data = snapshot.val();
+            const listEl = document.getElementById('admin-products-list');
+            const totalStatEl = document.getElementById('stat-total-cars');
+
+            if (data) {
+                allProducts = data;
+                const keys = Object.keys(data);
+                totalStatEl.textContent = keys.length;
+
+                listEl.innerHTML = keys.map(key => {
+                    const p = data[key];
+                    let imgCount = (p.images && p.images.length) || (p.image ? 1 : 0);
+                    let mainImg = (p.images && p.images[0]) || p.image || 'https://placehold.co/600x400';
+                    return `
+                        <div class="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 flex items-center gap-4 justify-between">
+                            <div class="flex items-center gap-4">
+                                <img src="${mainImg}" class="w-20 h-20 rounded-xl object-cover border border-neutral-800">
+                                <div>
+                                    <div class="flex gap-2 mb-1">
+                                        <span class="bg-white text-black font-black text-[10px] px-2 py-0.5 rounded">${p.marketType || 'غير محدد'}</span>
+                                    </div>
+                                    <h4 class="font-bold text-white text-sm">${p.title}</h4>
+                                    <div class="text-neutral-300 font-extrabold text-xs mt-1 font-mono">${p.price} ﷼</div>
+                                    <div class="text-[11px] text-neutral-400 mt-1">الممشى: <span class="text-white font-mono">${p.mileage || 'غير محدد'}</span> | <i class="fa-solid fa-images ml-1"></i> ${imgCount} صور</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="window.editProduct('${key}')" class="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300 hover:bg-neutral-800"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="window.deleteProduct('${key}')" class="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-red-400 hover:bg-neutral-800"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                allProducts = {};
+                totalStatEl.textContent = "0";
+                listEl.innerHTML = `<p class="text-center text-neutral-500 py-12 text-sm">لا توجد سيارات مسجلة حالياً.</p>`;
+            }
+        });
+
+        document.getElementById('product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('product-id').value;
+            const marketType = document.getElementById('market-type').value;
+            const manufacturer = document.getElementById('manufacturer').value;
+            const carModelName = document.getElementById('car-model-name').value;
+            const category = document.getElementById('car-category').value;
+            const year = document.getElementById('car-year').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const mileage = document.getElementById('mileage').value;
+            const description = document.getElementById('description').value;
+            
+            const fullTitle = `${manufacturer} ${carModelName} ${year} (${category})`;
+
+            let finalImages = uploadedImagesBase64;
+            if (finalImages.length === 0 && id && allProducts[id] && allProducts[id].images) {
+                finalImages = allProducts[id].images;
+            } else if (finalImages.length === 0 && id && allProducts[id] && allProducts[id].image) {
+                finalImages = [allProducts[id].image];
+            } else if (finalImages.length === 0) {
+                finalImages = ['https://placehold.co/600x400'];
+            }
+
+            const productData = {
+                marketType,
+                title: fullTitle,
+                manufacturer,
+                carModelName,
+                category,
+                year,
+                price,
+                mileage,
+                badge: `${category} - ${year}`,
+                description,
+                image: finalImages[0],
+                images: finalImages
+            };
+
+            if (id) {
+                update(ref(db, `products/${id}`), productData).then(() => {
+                    alert('تم تحديث بيانات السيارة بنجاح');
+                    resetForm();
+                    switchTab('manage-cars');
+                });
+            } else {
+                push(productsRef, productData).then(() => {
+                    alert('تمت إضافة السيارة بنجاح للقاعدة');
+                    resetForm();
+                    switchTab('manage-cars');
+                });
+            }
+        });
+
+        window.editProduct = function(id) {
+            const p = allProducts[id];
+            if (!p) return;
+            
+            switchTab('add-car');
+            document.getElementById('product-id').value = id;
+            document.getElementById('market-type').value = p.marketType || '';
+            document.getElementById('manufacturer').value = p.manufacturer || '';
+            updateCarModelsList();
+            document.getElementById('car-model-name').value = p.carModelName || '';
+            document.getElementById('car-category').value = p.category || '';
+            document.getElementById('car-year').value = p.year || '';
+            document.getElementById('price').value = p.price || '';
+            document.getElementById('mileage').value = p.mileage || '';
+            document.getElementById('description').value = p.description || '';
+            
+            if (p.images && Array.isArray(p.images)) {
+                uploadedImagesBase64 = p.images;
+            } else if (p.image) {
+                uploadedImagesBase64 = [p.image];
+            }
+
+            const previewContainer = document.getElementById('upload-preview-container');
+            previewContainer.innerHTML = uploadedImagesBase64.map(img => `
+                <div class="relative aspect-square rounded-xl overflow-hidden border border-neutral-800 bg-black">
+                    <img src="${img}" class="w-full h-full object-cover">
+                </div>
+            `).join('');
+
+            document.getElementById('form-title').textContent = 'تعديل بيانات السيارة';
+            document.getElementById('save-btn').textContent = 'تحديث البيانات';
+            document.getElementById('cancel-btn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.deleteProduct = function(id) {
+            if (confirm('هل أنت متأكد من حذف هذه السيارة من المعرض؟')) {
+                remove(ref(db, `products/${id}`));
+            }
+        };
+
+        window.resetForm = function() {
+            document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
+            document.getElementById('form-title').textContent = 'إضافة سيارة جديدة للمعرض';
+            document.getElementById('save-btn').textContent = 'حفظ وإضافة السيارة';
+            document.getElementById('cancel-btn').classList.add('hidden');
+            document.getElementById('car-model-name').innerHTML = '<option value="">اختر الشركة أولاً...</option>';
+            document.getElementById('upload-preview-container').innerHTML = '';
+            uploadedImagesBase64 = [];
+        };
+    </script>
+</body>
+</html>
